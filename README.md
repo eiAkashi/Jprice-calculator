@@ -18,7 +18,7 @@ handling fee — and shows the result in both **JPY** and **MMK (lakh)**.
    A hint below the input shows e.g. `4折 (割引 −60%)`.
 2. Behind the **gear icon**: adjust consumption tax (default 10%), handling fee (default 5%),
    and the ¥/lakh FX rate.
-3. Read the itemized receipt — **Price tag → Discount → Tax → 小計 (shop total) → Fee** —
+3. Read the itemized receipt — **Price tag → Discount → 割引後金額 (amount due) → Tax → 小計 (shop total) → Fee** —
    and the headline **You pay** total in ¥ and lakh MMK.
 4. A small note under the total shows the **effective discount off tag** (rounded %) and the
    active rate with its set date.
@@ -35,7 +35,7 @@ total    = afterTax + fee                 # お支払い額 (the headline figure
 MMK lakh = total ÷ rate                   # rate = ¥ per 1 lakh
 ```
 
-Receipt order: 値札価格 → 割引 → 消費税 → **小計** (shop total) → 代行手数料 → お支払い額
+Receipt order: 値札価格 → 割引 → **割引後価格** (after discount price) → 消費税 → **小計** (shop total) → 代行手数料 → お支払い額
 
 ## Updating the MMK rate
 

@@ -179,6 +179,7 @@
   .line.neg .val{color:var(--neg)}
   .line.add .val{color:var(--cream)}
   .line.sub{border-top:1px solid var(--line);margin-top:4px;padding-top:11px}
+  .line.due .val{color:var(--gold)}
   .line.sub .lab b,.line.sub .val{color:var(--gold-bright)}
 
   /* Total hero */
@@ -311,13 +312,14 @@
     <div class="receipt">
       <div class="line"><span class="lab"><b>値札価格</b> <span class="tag">Price tag</span></span><span class="val" id="rPrice">¥0</span></div>
       <div class="line neg"><span class="lab" id="rDiscLab">割引</span><span class="val" id="rDisc">−¥0</span></div>
+      <div class="line due"><span class="lab"><b>割引後価格</b> <span class="tag">Price tag − Discount</span></span><span class="val" id="rDue">¥0</span></div>
       <div class="line add"><span class="lab" id="rTaxLab">消費税</span><span class="val" id="rTax">+¥0</span></div>
       <div class="line sub"><span class="lab"><b>小計</b> <span class="tag">Shop total</span></span><span class="val" id="rSub">¥0</span></div>
       <div class="line add"><span class="lab" id="rFeeLab">代行手数料</span><span class="val" id="rFee">+¥0</span></div>
     </div>
 
     <div class="total">
-      <div class="tlab">お支払い額 <span class="en">You pay</span></div>
+      <div class="tlab">お支払い金額 <span class="en">You pay</span></div>
       <div class="amount"><span class="yen">¥</span><span class="num" id="rTotal">0</span></div>
       <div class="mmk">≈ <span id="rMmk">0.00</span> <span class="unit">lakh MMK</span></div>
       <div class="saved" id="rSaved"></div>
@@ -325,7 +327,7 @@
     </div>
 
     <div class="foot">
-      端数は円単位で四捨五入 · 消費税は割引後価格に対して計算 · 小計＝割引後＋消費税(お店への支払い) · 手数料は小計に対して計算 · MMK = お支払い額 ÷ レート(lakh表示)
+      端数は円単位で四捨五入 · 消費税は割引後価格に対して計算 · 小計＝割引後＋消費税(お店への支払い) · 手数料は小計に対して計算 · MMK = お支払い金額 ÷ レート(lakh表示)
     </div>
   </div>
 
@@ -398,12 +400,13 @@
 
     // receipt
     $('rPrice').textContent  = yen(price);
-    $('rDiscLab').textContent = `${wari}折 (割引 −${Math.round((1-payRate)*100)}%)`;
+    $('rDiscLab').innerHTML  = `<b>割引</b> <span class="tag">Discount · ${wari}折 −${Math.round((1-payRate)*100)}%</span>`;
     $('rDisc').textContent   = '−' + yen(discount);
-    $('rTaxLab').innerHTML   = `消費税 <span class="tag">+${taxP}%</span>`;
+    $('rDue').textContent    = yen(subtotal);
+    $('rTaxLab').innerHTML   = `<b>消費税</b> <span class="tag">+${taxP}% CT</span>`;
     $('rTax').textContent    = '+' + yen(tax);
     $('rSub').textContent    = yen(afterTax);
-    $('rFeeLab').innerHTML   = `代行手数料 <span class="tag">+${feeP}%</span>`;
+    $('rFeeLab').innerHTML   = `<b>代行手数料</b> <span class="tag">+${feeP}% Fee</span>`;
     $('rFee').textContent    = '+' + yen(fee);
 
     animateTotal(total);
