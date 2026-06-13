@@ -292,16 +292,17 @@
 
     <!-- Discount -->
     <div class="field">
-      <label>割引 <span class="en">/ Discount</span></label>
+      <label>折 <span class="en">/ Discount</span></label>
       <div class="input-wrap">
-        <input type="number" id="wari" value="6" min="0" max="10" step="0.5" inputmode="decimal" style="text-align:left;padding-left:14px">
-        <span class="suf">割</span>
+        <input type="number" id="wari" value="4" min="0" max="10" step="0.5" inputmode="decimal" style="text-align:left;padding-left:14px">
+        <span class="suf">折</span>
       </div>
       <div class="chips" id="chips">
-        <button class="chip" data-w="5">5割</button>
-        <button class="chip" data-w="6">6割</button>
-        <button class="chip" data-w="7">7割</button>
-        <button class="chip" data-w="8">8割</button>
+        <button class="chip" data-w="3">3折</button>
+        <button class="chip" data-w="3.5">3.5折</button>
+        <button class="chip" data-w="4">4折</button>
+        <button class="chip" data-w="4.5">4.5折</button>
+        <button class="chip" data-w="5">5折</button>
       </div>
       <div class="hint" id="wariHint"></div>
     </div>
@@ -310,8 +311,8 @@
     <div class="receipt">
       <div class="line"><span class="lab"><b>値札価格</b> <span class="tag">Price tag</span></span><span class="val" id="rPrice">¥0</span></div>
       <div class="line neg"><span class="lab" id="rDiscLab">割引</span><span class="val" id="rDisc">−¥0</span></div>
-      <div class="line sub"><span class="lab"><b>小計</b> <span class="tag">Subtotal</span></span><span class="val" id="rSub">¥0</span></div>
       <div class="line add"><span class="lab" id="rTaxLab">消費税</span><span class="val" id="rTax">+¥0</span></div>
+      <div class="line sub"><span class="lab"><b>小計</b> <span class="tag">Shop total</span></span><span class="val" id="rSub">¥0</span></div>
       <div class="line add"><span class="lab" id="rFeeLab">代行手数料</span><span class="val" id="rFee">+¥0</span></div>
     </div>
 
@@ -324,7 +325,7 @@
     </div>
 
     <div class="foot">
-      端数は円単位で四捨五入 · 消費税は小計に対して計算 · 手数料は税込額に対して計算 · MMK = お支払い額 ÷ レート(lakh表示)
+      端数は円単位で四捨五入 · 消費税は割引後価格に対して計算 · 小計＝割引後＋消費税(お店への支払い) · 手数料は小計に対して計算 · MMK = お支払い額 ÷ レート(lakh表示)
     </div>
   </div>
 
@@ -379,7 +380,7 @@
     const feeP  = clamp(num($('fee'), 5), 0, 100);
     mmkRate     = Math.max(1, num($('rate'), 3700));
 
-    const payRate  = 1 - wari / 10;                 // 6割 → pay 0.4
+    const payRate  = wari / 10;                      // 七折 → pay 0.7
     const subtotal = Math.round(price * payRate);   // 割引後 小計
     const discount = price - subtotal;
     const tax      = Math.round(subtotal * taxP / 100);
@@ -389,7 +390,7 @@
 
     // hint
     $('wariHint').textContent =
-      `${wari}割 → ${(wari*10)}% OFF · お支払い ${Math.round(payRate*100)}%`;
+      `${wari}折 (割引 −${Math.round((1-payRate)*100)}%)`;
 
     // active chip
     document.querySelectorAll('.chip').forEach(c =>
@@ -397,11 +398,11 @@
 
     // receipt
     $('rPrice').textContent  = yen(price);
-    $('rDiscLab').textContent = `割引 −${wari*10}% (${wari}割)`;
+    $('rDiscLab').textContent = `${wari}折 (割引 −${Math.round((1-payRate)*100)}%)`;
     $('rDisc').textContent   = '−' + yen(discount);
-    $('rSub').textContent    = yen(subtotal);
     $('rTaxLab').innerHTML   = `消費税 <span class="tag">+${taxP}%</span>`;
     $('rTax').textContent    = '+' + yen(tax);
+    $('rSub').textContent    = yen(afterTax);
     $('rFeeLab').innerHTML   = `代行手数料 <span class="tag">+${feeP}%</span>`;
     $('rFee').textContent    = '+' + yen(fee);
 
