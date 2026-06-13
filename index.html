@@ -265,7 +265,7 @@
           <label>為替レート <span class="en">/ Rate · 1 lakh MMK =</span></label>
           <div class="input-wrap">
             <span class="pre">¥</span>
-            <input type="number" id="rate" value="3800" min="1" step="50" inputmode="numeric">
+            <input type="number" id="rate" value="3700" min="1" step="50" inputmode="numeric">
           </div>
           <div class="setdate">設定日 <span class="en">/ Rate set:</span> <span id="rateDate">—</span></div>
         </div>
@@ -334,7 +334,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let prevTotal = 0;
-  let mmkRate = 3800; // yen per 1 lakh MMK
+  let mmkRate = 3700; // yen per 1 lakh MMK
 
   function setMmk(yenVal){
     const lakh = mmkRate > 0 ? (yenVal / mmkRate) : 0;
@@ -377,7 +377,7 @@
     const wari  = clamp(num($('wari')), 0, 10);
     const taxP  = clamp(num($('tax'), 10), 0, 100);
     const feeP  = clamp(num($('fee'), 5), 0, 100);
-    mmkRate     = Math.max(1, num($('rate'), 3800));
+    mmkRate     = Math.max(1, num($('rate'), 3700));
 
     const payRate  = 1 - wari / 10;                 // 6割 → pay 0.4
     const subtotal = Math.round(price * payRate);   // 割引後 小計
@@ -433,7 +433,7 @@
   const pad = n => String(n).padStart(2, '0');
   const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
   let rateSetDate = todayStr();
-  let lastRate = num($('rate'), 3800);
+  let lastRate = num($('rate'), 3700);
 
   function renderDate(){ $('rateDate').textContent = rateSetDate; updateRateNote(); }
 
@@ -444,13 +444,13 @@
 
   // a genuine rate change stamps today's date
   $('rate').addEventListener('input', () => {
-    const r = num($('rate'), 3800);
+    const r = num($('rate'), 3700);
     if(r !== lastRate){ lastRate = r; rateSetDate = todayStr(); renderDate(); }
   });
 
   async function saveSettings(){
     const data = {
-      rate: num($('rate'), 3800),
+      rate: num($('rate'), 3700),
       tax:  num($('tax'), 10),
       fee:  num($('fee'), 5),
       rateSetDate: rateSetDate,
@@ -497,8 +497,13 @@
     e.target.value = '';
   });
 
-  renderDate();
-  calc();
+  fetch('config.json')
+    .then(r => r.ok ? r.json() : {})
+    .catch(() => ({}))
+    .then(cfg => {
+      if(cfg.mmkRate){ $('rate').value = cfg.mmkRate; lastRate = cfg.mmkRate; }
+      renderDate(); calc();
+    });
 </script>
 </body>
 </html>
